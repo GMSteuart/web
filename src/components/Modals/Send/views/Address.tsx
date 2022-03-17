@@ -10,6 +10,7 @@ import {
   ModalHeader,
   Stack
 } from '@chakra-ui/react'
+import { ChainAdapter as CosmosChainAdapter } from '@shapeshiftoss/chain-adapters/dist/cosmossdk/cosmos/CosmosChainAdapter'
 import { ChainAdapter as EthereumChainAdapter } from '@shapeshiftoss/chain-adapters/dist/ethereum/EthereumChainAdapter'
 import get from 'lodash/get'
 import { useState } from 'react'
@@ -83,6 +84,10 @@ export const Address = () => {
               validate: {
                 validateAddress: async (value: string) => {
                   const validAddress = await adapter.validateAddress(value)
+                  if (adapter instanceof CosmosChainAdapter) {
+                    // TODO
+                    return true
+                  }
                   if (adapter instanceof EthereumChainAdapter) {
                     const validEnsAddress = await adapter.validateEnsAddress(value)
                     if (validEnsAddress.valid) {
