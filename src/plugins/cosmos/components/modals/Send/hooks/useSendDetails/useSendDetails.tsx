@@ -9,7 +9,6 @@ import { SendRoutes } from 'components/Modals/Send/Send'
 import { useChainAdapters } from 'context/ChainAdaptersProvider/ChainAdaptersProvider'
 import { useWallet } from 'context/WalletProvider/WalletProvider'
 import { BigNumber, bn, bnOrZero } from 'lib/bignumber/bignumber'
-import { accountIdToUtxoParams } from 'state/slices/portfolioSlice/utils'
 import {
   selectFeeAssetById,
   selectMarketDataById,

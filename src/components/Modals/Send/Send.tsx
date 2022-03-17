@@ -41,9 +41,10 @@ export const SendModal = ({ asset, accountId }: SendModalProps) => {
           <Switch>
             <Route
               path='/'
-              component={(props: RouteComponentProps) => (
-                <Form asset={asset} accountId={accountId} {...props} />
-              )}
+              component={(props: RouteComponentProps) => {
+                console.log({ asset })
+                return <Form asset={asset} accountId={accountId} {...props} />
+              }}
             />
           </Switch>
         </MemoryRouter>
