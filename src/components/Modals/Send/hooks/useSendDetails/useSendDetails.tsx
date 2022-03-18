@@ -97,27 +97,30 @@ export const useSendDetails = (): UseSendDetailsReturnType => {
       .toFixed(0)
 
     switch (values.asset.chain) {
-      // TODO: Handle Cosmos ChainType here
       case ChainTypes.Cosmos: {
-        // TODO(gomes): wire up
-        // const from = await adapter.getAddress({
-        // wallet
-        // })
-        // const cosmosChainAdapter = chainAdapterManager.byChain(ChainTypes.Cosmos)
-        // const to = values.address
+        const from = await adapter.getAddress({
+          wallet
+        })
+        const cosmosChainAdapter = chainAdapterManager.byChain(ChainTypes.Cosmos)
+        // TODO(gomes): add getFeeData when implemented in https://github.com/shapeshift/web/pull/1100/
+        console.log({ from, cosmosChainAdapter })
+        const to = values.address
 
         // github.com/shapeshift/lib/pull/435/files#diff-4edf85d1e30129961294bb9e57ec54a8bcf0c21fa7d00f5b6ba11e3c5f73910fR155
         return {
           [chainAdapters.FeeDataKey.Fast]: {
             txFee: '5000',
+            value: 42,
             chainSpecific: { gasLimit: '250000' }
           },
           [chainAdapters.FeeDataKey.Average]: {
             txFee: '3500',
+            value: 42,
             chainSpecific: { gasLimit: '250000' }
           },
           [chainAdapters.FeeDataKey.Slow]: {
             txFee: '2500',
+            value: 42,
             chainSpecific: { gasLimit: '250000' }
           }
         }
@@ -339,6 +342,10 @@ export const useSendDetails = (): UseSendDetailsReturnType => {
         if (!hasValidBalance) {
           setValue(SendFormFields.AmountFieldError, 'common.insufficientFunds')
         } else if (!hasEnoughNativeTokenForGas) {
+          // TODO(gomes): testing only - remove this
+          if (asset.caip19 === 'cosmos:cosmoshub-4/slip44:118') {
+            return setLoading(false)
+          }
           setValue(SendFormFields.AmountFieldError, [
             'modals.send.errors.notEnoughNativeToken',
             { asset: feeAsset.symbol }

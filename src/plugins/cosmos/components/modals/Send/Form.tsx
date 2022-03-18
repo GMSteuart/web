@@ -59,6 +59,7 @@ type SendFormProps = {
 }
 
 export const Form = ({ asset: initialAsset, accountId }: SendFormProps) => {
+  console.log('rendering cosmos form')
   const location = useLocation()
   const history = useHistory()
   const { handleSend } = useFormSend()

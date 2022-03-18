@@ -43,6 +43,7 @@ export const SendModal = ({ asset, accountId }: SendModalProps) => {
             <Route
               path='/'
               component={(props: RouteComponentProps) => {
+                // TODO(gomes): make this cleaner
                 if (asset.caip19 === 'cosmos:cosmoshub-4/slip44:118') {
                   return <CosmosForm asset={asset} accountId={accountId} {...props} />
                 }
