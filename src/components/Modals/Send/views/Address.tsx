@@ -83,11 +83,11 @@ export const Address = () => {
               required: true,
               validate: {
                 validateAddress: async (value: string) => {
-                  const validAddress = await adapter.validateAddress(value)
                   if (adapter instanceof CosmosChainAdapter) {
-                    // TODO
+                    // TODO(gomes): implement validateAddress in CosmosChainAdapter
                     return true
                   }
+                  const validAddress = await adapter.validateAddress(value)
                   if (adapter instanceof EthereumChainAdapter) {
                     const validEnsAddress = await adapter.validateEnsAddress(value)
                     if (validEnsAddress.valid) {

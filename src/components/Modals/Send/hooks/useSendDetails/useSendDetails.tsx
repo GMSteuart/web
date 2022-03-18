@@ -1,6 +1,7 @@
 import { convertXpubVersion, toRootDerivationPath } from '@shapeshiftoss/chain-adapters'
 import { bip32ToAddressNList } from '@shapeshiftoss/hdwallet-core'
 import { chainAdapters, ChainTypes } from '@shapeshiftoss/types'
+import { FeeDataEstimate } from '@shapeshiftoss/types/dist/chain-adapters'
 import { debounce } from 'lodash'
 import { useCallback, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
@@ -96,6 +97,35 @@ export const useSendDetails = (): UseSendDetailsReturnType => {
       .toFixed(0)
 
     switch (values.asset.chain) {
+      // TODO: Handle Cosmos ChainType here
+      case ChainTypes.Cosmos: {
+        // TODO(gomes): wire up
+        // const from = await adapter.getAddress({
+        // wallet
+        // })
+        // const cosmosChainAdapter = chainAdapterManager.byChain(ChainTypes.Cosmos)
+        // const to = values.address
+
+        // github.com/shapeshift/lib/pull/435/files#diff-4edf85d1e30129961294bb9e57ec54a8bcf0c21fa7d00f5b6ba11e3c5f73910fR155
+        return {
+          [chainAdapters.FeeDataKey.Fast]: {
+            txFee: '5000',
+            chainSpecific: { gasLimit: '250000' }
+          },
+          [chainAdapters.FeeDataKey.Average]: {
+            txFee: '3500',
+            chainSpecific: { gasLimit: '250000' }
+          },
+          [chainAdapters.FeeDataKey.Slow]: {
+            txFee: '2500',
+            chainSpecific: { gasLimit: '250000' }
+          }
+        }
+      }
+      case ChainTypes.Osmosis: {
+        // TODO
+        return {} as FeeDataEstimate<ChainTypes>
+      }
       case ChainTypes.Ethereum: {
         const from = await adapter.getAddress({
           wallet
