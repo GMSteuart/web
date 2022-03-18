@@ -1,6 +1,7 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons'
 import { Link, Text, useToast } from '@chakra-ui/react'
-import { ChainTypes } from '@shapeshiftoss/types'
+import { ChainAdapter } from '@shapeshiftoss/chain-adapters'
+import { chainAdapters, ChainTypes } from '@shapeshiftoss/types'
 import { useTranslate } from 'react-polyglot'
 import { SendInput } from 'components/Modals/Send/Form'
 import { useChainAdapters } from 'context/ChainAdaptersProvider/ChainAdaptersProvider'
@@ -21,35 +22,39 @@ export const useFormSend = () => {
     if (wallet) {
       try {
         const adapter = chainAdapterManager.byChain(data.asset.chain)
-        // const value = bnOrZero(data.cryptoAmount)
-        // .times(bnOrZero(10).exponentiatedBy(data.asset.precision))
-        // .toFixed(0)
+        const value = bnOrZero(data.cryptoAmount)
+          .times(bnOrZero(10).exponentiatedBy(data.asset.precision))
+          .toFixed(0)
 
         const adapterType = adapter.getType()
 
         let result
 
-        // const { estimatedFees, feeType, address: to } = data
+        const { estimatedFees, feeType, address: to } = data
         if (adapterType === ChainTypes.Cosmos) {
           // TODO(gomes): wire up
-          // const fees = estimatedFees[feeType] as chainAdapters.FeeData<ChainTypes.Ethereum>
-          // const gasPrice = fees.chainSpecific.gasPrice
-          // const gasLimit = fees.chainSpecific.gasLimit
-          // const address = isEthAddress(to) ? to : ((await ensLookup(to)).address as string)
-          // result = await (adapter as ChainAdapter<ChainTypes.Ethereum>).buildSendTransaction({
-          // to: address,
-          // value,
-          // wallet,
-          // chainSpecific: { erc20ContractAddress: data.asset.tokenId, gasPrice, gasLimit },
-          // sendMax: data.sendMax
-          // })
+          const fees = estimatedFees[feeType] as chainAdapters.FeeData<ChainTypes.Cosmos>
+          // TODOo(gomes): change .value access to .gasLimit after this is merged:
+          // https://github.com/shapeshift/lib/pull/435/files
+          const gas = fees.chainSpecific.value
+          const fee = fees.txFee
+          const address = to
+          result = await (adapter as ChainAdapter<ChainTypes.Cosmos>).buildSendTransaction({
+            to: address,
+            value,
+            wallet,
+            chainSpecific: { gas, fee },
+            sendMax: data.sendMax
+          })
         }
-        if (adapterType === ChainTypes.Cosmos) {
+        if (adapterType === ChainTypes.Osmosis) {
           // TODO
         } else {
           throw new Error('unsupported adapterType')
         }
-        // const txToSign = result.txToSign
+        const txToSign = result?.txToSign
+
+        console.log({ txToSign })
 
         let broadcastTXID: string | undefined
 
